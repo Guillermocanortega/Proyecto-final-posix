@@ -52,3 +52,104 @@ Fecha , Pelicula , Sala , Boletos , Total
 
 
 2025-04-01,Avengers,Sala1,45,6750.00
+
+# 📔 Bitácora Técnica: Desarrollo del Pipeline de Procesamiento de Datos
+
+## 🗓️ Semana 1: Configuración Inicial del Entorno
+### ✅ Objetivo Cumplido: 
+Establecer la estructura base del pipeline.
+
+### 🔧 Acciones Realizadas:
+```bash
+# Creación de estructura de directorios
+mkdir -p minipipeline_equipoX/{raw_data,scripts,db,exports}
+
+# Configuración inicial de la base de datos SQLite
+sqlite3 db/base_de_datos.sqlite "CREATE TABLE usuarios (...); ..."
+```
+### ⚠️ Problemas y Soluciones:
+## ⚠️ Problema
+
+Error: unable to open database file	
+
+
+## 🧐Causa
+
+Permisos incorrectos en /db	
+
+
+
+## ✅Solución
+
+chmod 755 db/
+
+### 🗓️ Semana 2: Desarrollo del Script ETL (etl.sh)
+## ✅ Objetivo Cumplido:
+Implementar el proceso completo de ETL.
+
+## 🔄 Flujo Implementado:
+
+### Extracción:
+
+## bash
+```bash
+[ -s "raw_data/ventas.csv" ] || exit 1
+```
+### Transformación:
+
+## awk
+```bash
+{gsub(/"/, ""); $2 = tolower($2)}
+```
+### Carga:
+
+## sql
+```bash
+BEGIN TRANSACTION;
+INSERT INTO ventas VALUES(...);
+COMMIT;
+```
+
+### ⚠️ Problemas
+## Error	                   
+- Campos vacíos	            
+- Fechas inválidas	          
+## Solución
+```bash
+- awk 'NF < 5 {exit 1}'
+- date -d "$fecha" "+%Y-%m-%d"
+```
+
+
+### 🗓️ Semana 3: Reportes Automatizados
+## 📊 Consultas SQL
+
+## sql
+```bash
+-- Top películas
+SELECT pelicula, SUM(boletos) 
+FROM ventas 
+GROUP BY pelicula;
+```
+
+
+### 🚀 Generación de Reportes
+## bash
+```bash
+sqlite3 -json db/cine.db "SELECT..." | jq > exports/reporte.json
+```
+
+### 📌 Lecciones Aprendidas
+## 🔍 Validar datos desde el inicio
+
+## ⚡ Usar transacciones SQL
+
+## 🛠️ Dominar herramientas CLI (awk, jq)
+
+### 📊 Métricas Finales
+## Concepto	Valor
+## ⏳ Tiempo	18 hrs
+## 🐞 Errores	12
+## 🔄 Versiones	15
+
+
